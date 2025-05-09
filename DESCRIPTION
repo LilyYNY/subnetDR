@@ -1,0 +1,32 @@
+Package: subnetDR
+Title: Subtype-module network Drug Response
+Version: 0.1.0
+Authors@R: 
+    person("Soochow", "University", , "suda_sysbio@hotmail.com", role = c("aut", "cre"))
+Description: The tool of identification of different subtype-specific modules as well as drug response.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports:
+    dplyr,
+    egg,
+    purrr,
+    scales,
+    readxl,
+    openxlsx,
+    igraph,
+    stringr,
+    ggplot2,
+    msigdbr,
+    magrittr,
+    clusterProfiler,
+    tidyr,
+    RColorBrewer,
+    utils,
+    oncoPredict,
+    ConsensusClusterPlus,
+    stats,
+    reticulate,
+    readr,
+    pROC
+RoxygenNote: 7.3.2
