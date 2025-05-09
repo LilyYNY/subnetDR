@@ -19,7 +19,7 @@ predict_drug_response(
 
 \item{drn_base}{Character string specifying the base directory containing Drug Response Network (DRN) files.}
 
-\item{prs_base}{Character string specifying the base directory containing Protein Sequence (PRS) files.}
+\item{prs_base}{Character string specifying the base directory containing Protein and Drug sequence files.}
 
 \item{output_base}{Character string specifying the base directory for output files.}
 
@@ -33,7 +33,7 @@ predict_drug_response(
 Saves DPI information and drug-target interaction predictions to the specified output directory.
 }
 \description{
-This function predicts drug-target interactions using the DeepPurpose Python library for specified subtypes, network methods, and module methods, integrating DRN and PRS data.
+This function predicts drug-target interactions using the DeepPurpose Python library for specified subtypes, network methods, and module methods, integrating DRN and SEQ data.
 }
 \details{
 DETAILS

@@ -1,5 +1,5 @@
 #' @title Drug Response Prediction Using DeepPurpose
-#' @description This function predicts drug-target interactions using the DeepPurpose Python library for specified subtypes, network methods, and module methods, integrating DRN and PRS data.
+#' @description This function predicts drug-target interactions using the DeepPurpose Python library for specified subtypes, network methods, and module methods, integrating DRN and SEQ data.
 #' @importFrom magrittr %>%
 #' @importFrom readxl read_excel
 #' @importFrom dplyr pull mutate select arrange rename row_number inner_join
@@ -8,7 +8,7 @@
 #' @importFrom reticulate use_condaenv py_run_string import_main py_to_r
 #' @param subtype_file Character string specifying the path to the subtype phenotype data file.
 #' @param drn_base Character string specifying the base directory containing Drug Response Network (DRN) files.
-#' @param prs_base Character string specifying the base directory containing Protein Sequence (PRS) files.
+#' @param prs_base Character string specifying the base directory containing Protein and Drug sequence files.
 #' @param output_base Character string specifying the base directory for output files.
 #' @param py_env Character string specifying the path to the Python Conda environment with DeepPurpose installed.
 #' @param network_methods  Character vector specifying the PPI network databases (e.g., "string", "physicalppin", "chengf").
@@ -103,7 +103,7 @@ predict_drug_response <- function(
             mutate(drug = str_replace(drug, "_\\d+$", "")) %>%
             select(protein, drug)
 
-          # Construct PRS file paths
+          # Construct SEQ file paths
           seq_file <- file.path(
             prs_base, phenotype, module_dir, network_method, module,
             paste0(
@@ -120,7 +120,7 @@ predict_drug_response <- function(
           )
 
           if (!file.exists(seq_file) || !file.exists(smiles_file)) {
-            cat("Missing PRS data files\n")
+            cat("Missing SEQ data files\n")
             next
           }
 

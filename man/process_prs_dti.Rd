@@ -27,7 +27,7 @@ process_prs_dti(
 Saves PRS-DTI scores and related files to the specified output directories.
 }
 \description{
-Processes Protein Sequence (PRS) and Drug-Target Interaction (DTI) data using DeepPurpose and compute protein-drug interaction scores for each subtype, network, and module.
+Perturbation Response Scanning (PRS) and Drug-Target Interaction (DTI) data using DeepPurpose and compute protein-drug interaction scores for each subtype, network, and module.
 }
 \details{
 DETAILS

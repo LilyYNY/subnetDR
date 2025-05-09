@@ -92,7 +92,7 @@ split_edge_module <- function(
 }
 
 #' @title Process PRS-DTI Data
-#' @description Processes Protein Sequence (PRS) and Drug-Target Interaction (DTI) data using DeepPurpose and compute protein-drug interaction scores for each subtype, network, and module.
+#' @description Perturbation Response Scanning (PRS) and Drug-Target Interaction (DTI) data using DeepPurpose and compute protein-drug interaction scores for each subtype, network, and module.
 #' @param subtype_file Character string specifying the path to the subtype phenotype data file.
 #' @param prs_ps_base Character string specifying the base directory containing PRS and DTI files.
 #' @param network_methods Character vector specifying the PPI network databases (default: c("string", "physicalppin", "chengf")).
@@ -130,7 +130,7 @@ process_prs_dti <- function(
   pretrained_model <- "MPNN_CNN_BindingDB_IC50"
   model <- py$models$model_pretrained(model = pretrained_model)
   # Set local NetSDR source code path
-  enm_path <- "F:\\subnetDR\\sample_test\\enm\\python"
+  enm_path <- "F:\\sample_test\\enm\\python"
   # Add local path to Python's sys.path
   py_run_string(sprintf("import sys; sys.path.append(r'%s')", enm_path))
   # Import Enm module from NetSDR
@@ -171,7 +171,7 @@ process_prs_dti <- function(
           next
         }
 
-        # Step 5: Perform network analysis using NetSDR
+        # Step 5: Perform network analysis
         ok <- try({
           py_run_string("enm = Enm('PPIN')")  # Initialize Enm object for PPIN
           py_run_string(sprintf("enm.read_network(r'%s', sep='\\t')", PPIN_file))  # Read PPIN network
