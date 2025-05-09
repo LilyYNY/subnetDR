@@ -18,7 +18,7 @@
 #' @examples
 #' \dontrun{
 #' if(interactive()){
-#'  predict_drug_response(
+#'  predict_BA(
 #'  subtype_file = "./subtype.xlsx",
 #'  drn_base = "./DrugResponse",
 #'  prs_base = "./PRS/SMILES_SEQ",
@@ -31,7 +31,7 @@
 #' }
 #' @rdname predict_drug_response
 #' @export
-predict_drug_response <- function(
+predict_BA <- function(
     subtype_file,
     drn_base,
     prs_base,

@@ -1,5 +1,5 @@
 Package: subnetDR
-Title: Subtype-Specific Network Module Discovery and Drug Repositioning System
+Title: Subtype-Specific Network Module Discovery and Drug Repurposing System
 Version: 0.1.0
 Authors@R: 
     person("Soochow", "University", , "suda_sysbio@hotmail.com", role = c("aut", "cre"))

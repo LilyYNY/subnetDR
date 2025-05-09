@@ -129,11 +129,11 @@ process_prs_dti <- function(
   py_run_string("from DeepPurpose import DTI as models")
   pretrained_model <- "MPNN_CNN_BindingDB_IC50"
   model <- py$models$model_pretrained(model = pretrained_model)
-  # Set local NetSDR source code path
-  enm_path <- "F:\\sample_test\\enm\\python"
+  # Set local source code path
+  enm_path <- "F:\\sample_test\\python\\enm"
   # Add local path to Python's sys.path
   py_run_string(sprintf("import sys; sys.path.append(r'%s')", enm_path))
-  # Import Enm module from NetSDR
+  # Import Enm module
   py_run_string("from enm.Enm import *")
 
   # Step 3: Read subtype list

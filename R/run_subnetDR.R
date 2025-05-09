@@ -69,8 +69,15 @@ run_subnetDR_pipeline <- function(base_path , py_env) {
     gene_col_name = "Gene"
   )
 
+  run_SEQCre(
+    input_base = ile.path(base_path, "DrugResponse"),
+    output_base = file.path(base_path, "PRS/SMILES_SEQ"),
+    subtype_file = file.path(base_path, "subtype.xlsx"),
+    py_env = py_env
+  )
+
   # Binding score analysis
-  predict_drug_response(
+  predict_BA(
     subtype_file = file.path(base_path, "subtype.xlsx"),
     drn_base = file.path(base_path, "DrugResponse"),
     prs_base = file.path(base_path, "PRS/SMILES_SEQ"),
@@ -152,6 +159,14 @@ run_subnetDR_pipeline <- function(base_path , py_env) {
 #   network_methods = c("String", "physicalPPIN", "chengF"),
 #   module_methods = c("Louvain", "WF"),
 #   gene_col_name = "Gene"
+# )
+#
+#
+# run_SEQCre_R(
+#   input_base   = "F:/subnetDR/sample_test/DrugResponse",
+#   output_base  = "F:/subnetDR/sample_test/PRS/SMILES_SEQ",
+#   subtype_file = "F:/subnetDR/sample_test/subtype.xlsx",
+#   py_env       = "C:/Users/YangMiao/.conda/envs/py3.9"
 # )
 #
 # predict_drug_response(

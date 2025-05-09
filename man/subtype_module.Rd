@@ -27,7 +27,7 @@ DETAILS
 \examples{
 \dontrun{
 # setwd("your_workspace")
-module_division(network_method = c("String", "physicalPPIN", "chengF"),
-module_method = c("Louvain", "WF"))
+subtype_module(network_method = c("String", "physicalPPIN", "chengF"),
+  module_method = c("Louvain", "WF"))
  }
 }
