@@ -26,20 +26,18 @@ run_SEQCre <- function(input_base,
                          py_env = "py3.9") {
   library(reticulate)
 
-  # 2) 切换到指定 conda 环境
+  # 2) Switch to the specified conda environment
   use_condaenv(py_env, required = TRUE)
 
-  # 3) 找到并加载包外或项目目录下的 SEQCre.py
-  #    这里假设你在当前工作目录或包的 inst/python 下放了脚本
-  py_path <- "F:/sample_test/python/SEQCre/7.SEQCre.py"  # <- 根据你的实际路径调整
+  # 3) Find and load SEQCre.py from outside the package or in the project directory. 
+  py_path <- "F:/sample_test/python/SEQCre/7.SEQCre.py"  # Adjust according to your actual path.
   if (!file.exists(py_path)) {
-    stop("找不到 SEQCre.py，请确认 py_path 正确：", py_path)
+    stop("cannot found SEQCre.py，please confirm py_path is correct：", py_path)
   }
   source_python(py_path)
 
-  # 4) 调用 Python 接口
-  #    run_seqcre 会遍历 input_base 下的所有 DRN_info 文件，
-  #    生成对应的 seq_file 和 smiles_file 到 output_base
+  # 4) Call the Python interface
+  #  run_seqcre will traverse all DRN_info files under input_base, generating the corresponding seq_file and smiles_file to output_base.
   py$run_seqcre(input_base, output_base, subtype_file)
 
   invisible(NULL)
