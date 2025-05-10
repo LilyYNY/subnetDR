@@ -6,6 +6,7 @@
 #' @importFrom dplyr rename pull filter select mutate arrange inner_join row_number distinct
 #' @importFrom stringr str_extract str_replace
 #' @importFrom reticulate use_condaenv py_run_string import_main py_to_r
+#' @importFrom purrr walk
 #' @param input_file  Character string specifying the path to the input edge module file.
 #' @param out_base Character string specifying the base directory for output files.
 #' @return Saves edge module files for each valid module to the specified output directory; returns NULL if no valid modules.
@@ -20,11 +21,8 @@
 #' )
 #' purrr::walk(files, split_edge_module,out_base)
 #' }
-#' @seealso
-#'  \code{\link[purrr]{map}}
 #' @rdname split_edge_module
 #' @export
-#' @importFrom purrr walk
 split_edge_module <- function(
     input_file,
     out_base
@@ -93,6 +91,13 @@ split_edge_module <- function(
 
 #' @title Process PRS-DTI Data
 #' @description Perturbation Response Scanning (PRS) and Drug-Target Interaction (DTI) data using DeepPurpose and compute protein-drug interaction scores for each subtype, network, and module.
+#' @importFrom magrittr %>%
+#' @importFrom readr read_tsv write_tsv read_csv write_csv cols
+#' @importFrom readxl read_excel
+#' @importFrom dplyr rename pull filter select mutate arrange inner_join first
+#' @importFrom reticulate use_condaenv py
+#' @importFrom utils write.csv
+#' @importFrom stats na.omit
 #' @param subtype_file Character string specifying the path to the subtype phenotype data file.
 #' @param prs_ps_base Character string specifying the base directory containing PRS and DTI files.
 #' @param network_methods Character vector specifying the PPI network databases (default: c("string", "physicalppin", "chengf")).
@@ -119,70 +124,63 @@ process_prs_dti <- function(
     module_methods  = c("Louvain","WF"),
     py_env
 ) {
-  # Step 1: Validate input parameters
-  if (!file.exists(subtype_file)) stop("Subtype file not found: ", subtype_file)
-  if (!dir.exists(prs_ps_base)) stop("PRS PS base directory does not exist: ", prs_ps_base)
+  # 1. Load and check parameters
+  if (!file.exists(subtype_file)) stop("Cannot find subtype file: ", subtype_file)
+  if (!dir.exists(prs_ps_base))    stop("The PRS PS base directory does not exist: ", prs_ps_base)
 
-  # Step 2: Configure Python environment and load modules
-  use_condaenv(py_env, required = TRUE)  # Activate specified Conda environment
-  # Load DeepPurpose DTI model
+  # 2. Switch and initialize the Python environment
+  # Switch and initialize the Python environment
+  use_condaenv(py_env, required = TRUE)
+  # Load DeepPurpose DTI
   py_run_string("from DeepPurpose import DTI as models")
   pretrained_model <- "MPNN_CNN_BindingDB_IC50"
   model <- py$models$model_pretrained(model = pretrained_model)
-  # Set local source code path
-  enm_path <- "F:\\sample_test\\python\\enm"
-  # Add local path to Python's sys.path
+  # Set the local source code path
+  enm_path <- "F:\\sample_test\\python"
+  # Add the local path to Python's sys.path
   py_run_string(sprintf("import sys; sys.path.append(r'%s')", enm_path))
-  # Import Enm module
+  # load enm
   py_run_string("from enm.Enm import *")
 
-  # Step 3: Read subtype list
+  # 3. Read subtype list
   subtypes <- read_excel(subtype_file, skip=1) %>% pull(2) %>% unique() %>% na.omit()
-  if (length(subtypes)==0) stop("No subtypes detected, check subtype file")
-  cat("Detected subtypes:", paste(subtypes, collapse = ", "), "\n")
+  if (length(subtypes)==0) stop("No subtypes detected, please check the subtype file.")
 
-  # Step 4: Iterate over subtypes, network methods, and module methods
+  # 4. Traverse various subtypes/networks/modular approaches
   for (phenotype in subtypes) {
-    cat("\n==== Processing subtype:", phenotype, "====\n")
+    cat("\n==== Handling subtypes: ", phenotype, "====\n")
     for (net in network_methods) for (modl in module_methods) {
-      # Construct base directory for current combination
       base_dir <- file.path(prs_ps_base, phenotype, modl, net)
       if (!dir.exists(base_dir)) {
-        cat("Skipping: Directory does not exist", base_dir, "\n")
-        next
+        cat("Skip: Directory does not exist", base_dir, "\n"); next
       }
-      # Get module subdirectories
+      # Each module subdirectory
       module_dirs <- list.dirs(base_dir, full.names=TRUE, recursive=FALSE)
       if (length(module_dirs)==0) {
-        cat("No module directories found in", base_dir, "\n")
-        next
+        cat("Not in", base_dir, "Find the module directory\n"); next
       }
-      # Process each module directory
       for (current_dir in module_dirs) {
         mod_name <- basename(current_dir)
-        cat("-> Module:", mod_name, "\n")
-        # Locate BA and PPIN files
+        cat("-> Module：", mod_name, "\n")
         BA_pattern   <- paste0("^virtual_screening__", modl, "_", net, "_", phenotype, "_", mod_name, "\\.txt$")
         PPIN_pattern <- "^edge_Module.*\\.txt$"
         BA_file   <- list.files(current_dir, BA_pattern, full.names=TRUE) %>% first()
         PPIN_file <- list.files(current_dir, PPIN_pattern, full.names=TRUE) %>% first()
         if (is.na(BA_file) || is.na(PPIN_file)) {
-          cat("  Missing BA or PPIN file, skipping module\n")
-          next
+          cat("  The document is incomplete, skipping the module.\n"); next
         }
 
-        # Step 5: Perform network analysis
+        # 5. Network Analysis
         ok <- try({
-          py_run_string("enm = Enm('PPIN')")  # Initialize Enm object for PPIN
-          py_run_string(sprintf("enm.read_network(r'%s', sep='\\t')", PPIN_file))  # Read PPIN network
-          py_run_string("enm.gnm_analysis(normalized=False)")  # Perform GNM analysis
-          py_run_string("enm.cluster_matrix(enm.prs_mat)")  # Cluster PRS matrix
+          py_run_string("enm = Enm('PPIN')")
+          py_run_string(sprintf("enm.read_network(r'%s', sep='\\t')", PPIN_file))
+          py_run_string("enm.gnm_analysis(normalized=False)")
+          py_run_string("enm.cluster_matrix(enm.prs_mat)")
         }, silent=TRUE)
         if (inherits(ok, "try-error")) {
-          cat("  Python analysis failed, skipping\n")
-          next
+          cat("  Python analysis failed, skipping\n"); next
         }
-        # Save sensitivity and PRS matrix
+        #  sensitivity
         pcc_df_path     <- file.path(current_dir, "pcc_df.csv")
         prs_mat_df_path <- file.path(current_dir, "prs_mat_df.txt")
         py_run_string(sprintf("enm.df.to_csv(r'%s', index=True)", pcc_df_path))
@@ -191,7 +189,7 @@ process_prs_dti <- function(
           prs_mat_df_path
         ))
 
-        # Step 6: Read Binding Affinity (BA) data
+        # 6. Read BA
         BA <- read_tsv(BA_file, col_types=cols()) %>%
           rename(
             Drug.Name    = `Drug Name`,
@@ -204,30 +202,28 @@ process_prs_dti <- function(
           ) %>%
           filter(!is.na(Binding.Score))
 
-        # Step 7: Read sensitivity data
+        # 7. Read sensitivity
         Sens <- read_csv(pcc_df_path, col_types=cols()) %>%
           rename(Target.Name = orf_name) %>%
           select(Target.Name, sens) %>%
           mutate(sens = as.numeric(sens)) %>%
           filter(!is.na(sens))
 
-        # Step 8: Merge BA and sensitivity data to compute PS scores
+        # 8. Merge calculation ps
         ps_df <- BA %>%
           inner_join(Sens, by="Target.Name") %>%
           mutate(ps = Binding.Score * sens) %>%
           arrange(desc(ps))
 
-        # Step 9: Save results
+        # 9. save results
         write_csv(ps_df, file.path(current_dir, "prs_dti_score.csv"))
         ps_df %>%
           select(Drug.Name, Target.Name, score = ps) %>%
           write_tsv(file.path(current_dir, "dpi_ps_score.txt"))
-        cat("  Module processing complete:", current_dir, "\n")
-
-        Sys.sleep(2)  # Pause to avoid overloading system
+        cat("  Module processing completed：", current_dir, "\n")
       }
     }
-    cat("Subtype complete:", phenotype, "\n")
+    cat("Subtype completed：", phenotype, "\n")
   }
-  cat("\nAll processing complete!\n")
+  cat("\nAll processing completed!\n")
 }

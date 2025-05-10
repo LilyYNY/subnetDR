@@ -70,7 +70,7 @@ run_subnetDR_pipeline <- function(base_path , py_env) {
   )
 
   run_SEQCre(
-    input_base = ile.path(base_path, "DrugResponse"),
+    input_base = file.path(base_path, "DrugResponse"),
     output_base = file.path(base_path, "PRS/SMILES_SEQ"),
     subtype_file = file.path(base_path, "subtype.xlsx"),
     py_env = py_env
@@ -188,8 +188,8 @@ run_subnetDR_pipeline <- function(base_path , py_env) {
 # purrr::walk(files, split_edge_module)
 #
 # process_prs_dti(
-#   subtype_file    = "F:/subnetDR/sample_test/subtype.xlsx",
-#   prs_ps_base     = "F:/subnetDR/sample_test/PRS/PS",
+#   subtype_file    = "F:/sample_test/subtype.xlsx",
+#   prs_ps_base     = "F:/sample_test/PRS/PS",
 #   network_methods = c("string","physicalppin","chengf"),
 #   module_methods  = c("Louvain","WF"),
 #   py_env          = "C:/Users/YangMiao/.conda/envs/py3.9"

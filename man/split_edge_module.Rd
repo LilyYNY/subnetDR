@@ -31,6 +31,3 @@ files <- list.files(
 purrr::walk(files, split_edge_module,out_base)
 }
 }
-\seealso{
-\code{\link[purrr]{map}}
-}
