@@ -168,8 +168,7 @@ run_subnetDR_pipeline(
 
 The pipeline runs the full workflow from differential expression analysis to network construction, module detection, functional annotation, drug response prediction, binding affinity prediction, perturbation-response scoring, and ROC evaluation.
 
-Notes
-Large input datasets and restricted database files are not included directly in this repository.
+### Notes
 Please prepare PPI databases, GDSC drug response data, DrugBank/TTD drug-target data, and ENM files before running the full pipeline.
 See the example sample_test workflow for expected file organization.
 The package can be run as a full automated pipeline or step by step for debugging and customization.
