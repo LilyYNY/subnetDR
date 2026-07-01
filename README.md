@@ -96,3 +96,7 @@ library(devtools)
 
 install_github("LilyYNY/subnetDR")
 library(subnetDR)
+
+Create Python Environment
+Open Anaconda Prompt or a terminal with Conda enabled.
+
