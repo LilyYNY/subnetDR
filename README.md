@@ -2,6 +2,8 @@
 
 subnetDR is an R/Python workflow for subtype-specific network module identification and drug repositioning. It integrates proteomics data, protein-protein interaction networks, drug response prediction, drug-target interaction prediction, and perturbation-response scoring to prioritize candidate drugs for cancer subtypes.
 
+![Workflow overview](figures/workflow-overviews.png)
+
 ## Software Copyright
 
 **A Subtype-Specific Network Module Identification and Drug Repositioning System Software V1.0**  
