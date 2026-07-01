@@ -93,10 +93,84 @@ Python-related steps require a Conda environment. The example environment below 
 ```r
 install.packages("devtools")
 library(devtools)
+install_github("LilyYNY/subnetDR")
+library(subnetDR)
+```
 
+### Create Python Environment
+Open Anaconda Prompt or a terminal with Conda enabled.
+```r
+conda create -n py3.9 python=3.9
+conda activate py3.9
+pip install rdkit
+pip install descriptastorus
+pip install DeepPurpose
+pip install seaborn
+pip install goatools
+pip install prody
+conda deactivate
+```
+If rdkit cannot be installed through pip, install it through Conda: conda install -c conda-forge rdkit
+In R, the Python environment can be selected through reticulate or passed to subnetDR functions through the py_env argument.
+
+### Required Input Files
+For the automated workflow, place all required files under one project folder, for example F:/sample_test.
+```r
+expression.xlsx
+subtype.xlsx
+GDSC2_Expr.RData
+GDSC2_Res.RData
+DTI_DrugBank.RData
+DTI_TTD.RData
+```
+
+### Required PPI directory:
+```r
+PPI/
+├── String/
+│   ├── 9606.protein.info.v11.5_new.txt
+│   └── 9606.protein.info.v11.5.txt
+├── PhysicalPPIN/
+│   └── physicalppi
+└── ChengF/
+    ├── 9606.protein.info.v11.5_new.txt
+    ├── Homo_sapiens_gene_info
+    └── Human Interactome
+```
+
+### Required ENM directory:
+```r
+python/
+└── enm/
+```
+
+### The input phenotype file subtype.xlsx should contain at least:
+```r
+Sample
+Subtype
+```
+The expression matrix expression.xlsx should contain genes or proteins in the first column and samples in the remaining columns.
+
+###  Quick Start
+```r
+library(devtools)
 install_github("LilyYNY/subnetDR")
 library(subnetDR)
 
-Create Python Environment
-Open Anaconda Prompt or a terminal with Conda enabled.
+base_path <- "F:/sample_test"
+py_env <- "C:/Users/YangMiao/.conda/envs/py3.9"
+
+run_subnetDR_pipeline(
+  base_path = base_path,
+  py_env = py_env
+)
+```
+
+The pipeline runs the full workflow from differential expression analysis to network construction, module detection, functional annotation, drug response prediction, binding affinity prediction, perturbation-response scoring, and ROC evaluation.
+
+Notes
+Large input datasets and restricted database files are not included directly in this repository.
+Please prepare PPI databases, GDSC drug response data, DrugBank/TTD drug-target data, and ENM files before running the full pipeline.
+See the example sample_test workflow for expected file organization.
+The package can be run as a full automated pipeline or step by step for debugging and customization.
 
