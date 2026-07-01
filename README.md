@@ -110,7 +110,6 @@ pip install DeepPurpose
 pip install seaborn
 pip install goatools
 pip install prody
-conda deactivate
 ```
 If rdkit cannot be installed through pip, install it through Conda: conda install -c conda-forge rdkit
 In R, the Python environment can be selected through reticulate or passed to subnetDR functions through the py_env argument.
